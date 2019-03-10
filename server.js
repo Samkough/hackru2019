@@ -76,22 +76,6 @@ app.get("/exchange", function(req, res) {
   });
 });
 
-app.get("/vehicle/distance", function(req, res) {
-  return smartcar
-    .getVehicleIds(access.accessToken)
-    .then(function(data) {
-      return data.vehicles;
-    })
-    .then(function(vehicleIds) {
-      const vehicle = new smartcar.Vehicle(vehicleIds[0], access.accessToken);
-      return vehicle.odometer();
-    })
-    .then(function(info) {
-      res.json(info.data.distance);
-      console.log(info);
-    });
-});
-
 app.post("/", (req, res) => {
   var error;
   var cost, gals;
