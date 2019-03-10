@@ -1,5 +1,7 @@
 const http = require("http");
 const express = require("express");
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 const bodyParser = require("body-parser");
 const MessageResponse = require("twilio").twiml.MessagingResponse;
 const cors = require("cors");
@@ -9,6 +11,9 @@ const app = express().use(cors());
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
+var db = [];
+
+//SmartCar setup
 const sc_client = new smartcar.AuthClient({
   clientId: "027d8145-bf3d-4c95-bcec-6286097177fa",
   clientSecret: "90b82f8c-db9f-45b7-989a-c2af6ce02482",
@@ -18,6 +23,32 @@ const sc_client = new smartcar.AuthClient({
 });
 let access;
 
+// //mongodb setup
+// var fillupSchema = new Schema({
+//   cost: String,
+//   galons: String,
+//   odometer: String,
+//   location: {
+//     longitude: String,
+//     latitude: String
+//   },
+//   date: {
+//     type: Date,
+//     default: Date.now
+//   }
+// });
+
+// const mongoURI =
+//   "mongodb://admin:admin1234@ds163905.mlab.com:63905/hackru2019-mpg";
+
+// mongoose
+//   .connect(mongoURI, { useNewUrlParser: true })
+//   .then(() => {
+//     console.log("connected to mongodb");
+//   })
+//   .catch(err => console.log(err));
+
+//Routes
 app.get("/login", function(req, res) {
   const link = sc_client.getAuthUrl();
   res.redirect(link);
@@ -96,16 +127,17 @@ app.post("/", (req, res) => {
     newData = {
       cost: cost,
       odometer: data[0],
-      gals: gals,
+      gallons: gals,
       location: data[1],
       date: new Date()
     };
-    data.push(newData);
-    console.log(newData);
+    console.log("========data\n" + JSON.stringify(newData));
+    db.push(newData);
+    console.log("========db\n" + JSON.stringify(db));
     if (error) twiml.message(error);
     else
       twiml.message(
-        `you filled up ${newData.gals} galons for ${
+        `you filled up ${newData.gallons} galons for ${
           newData.cost
         } at position: ${newData.location.latitude}, ${
           newData.location.longitude
