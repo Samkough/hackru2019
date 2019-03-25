@@ -23,31 +23,6 @@ const sc_client = new smartcar.AuthClient({
 });
 let access;
 
-// //mongodb setup
-// var fillupSchema = new Schema({
-//   cost: String,
-//   galons: String,
-//   odometer: String,
-//   location: {
-//     longitude: String,
-//     latitude: String
-//   },
-//   date: {
-//     type: Date,
-//     default: Date.now
-//   }
-// });
-
-// const mongoURI =
-//   "mongodb://admin:admin1234@ds163905.mlab.com:63905/hackru2019-mpg";
-
-// mongoose
-//   .connect(mongoURI, { useNewUrlParser: true })
-//   .then(() => {
-//     console.log("connected to mongodb");
-//   })
-//   .catch(err => console.log(err));
-
 //Routes
 app.get("/login", function(req, res) {
   const link = sc_client.getAuthUrl();
@@ -84,11 +59,12 @@ app.post("/", (req, res) => {
   const message = req.body.Body;
 
   //parse message
-  message_split = message.split(",");
+  msg_split = message.split(",");
+
   message_split.forEach(item => {
-    if (item.charAt(0) == "$" && !cost) {
+    if (item.charAt(0) == "$" && cost <= 0) {
       cost = item.substring(1);
-    } else if (item.charAt(0) == "$" && cost) {
+    } else if (item.charAt(0) == "$" && cost >= 0) {
       errors = "input error";
     } else {
       gals = item;
